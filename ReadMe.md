@@ -21,4 +21,4 @@ The R Shiny app for interactive visualizations of our results is hosted [here](h
 
 If you are using TransPRECISE codes or the Shiny app, please cite the following.
 
-Bhattacharyya, R., Ha, M. J., Liu, Q. & Baladandayuthapani, V. (2019). Proteomics-based Network Modeling of Pan-cancer Human and Cell line Interactome. *Submitted to JCO CCI*.
+Bhattacharyya, R., Ha, M. J., Liu, Q., Akbani, R., Liang, H. & Baladandayuthapani, V. (2019). Proteomics-based Network Modeling of Pan-cancer Human and Cell line Interactome. *Submitted to JCO CCI*.
