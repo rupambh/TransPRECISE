@@ -1,0 +1,98 @@
+---
+title: "Tutorial for TransPRECISE"
+author: "Rupam Bhattacharyya"
+date: "1/31/2020"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Setup
+
+In this tutorial, we will be illustrating how to use the TransPRECISE pipeline to run Bayesial graphical regression on patient/cell lines proteomic data and collect the outputs for cross-cancer comparison of the pathway activities and personalized drug response predictions.
+
+```{r, eval=FALSE}
+# You need to install the remotes package for this to work.
+# Also, if you encounter errors while installing PRECISE due to some packages
+# not being avaiable in CRAN, it is possibly because they are now
+# available via Bioconductor!
+
+remotes::install_github("MinJinHa/PRECISE")
+```
+
+# Running Bayesian graphical regression
+
+For a given cancer type and pathway, the typical proteomics data would look someething like this in R. (This is a subset of the ACC patient samples, the pathway exhibited is apoptosis.)
+
+```{r}
+load("Input.rda")
+head(Final[1,1][[1]])
+```
+
+To fit the Bayesian graphical regression model and save the outputs for future, we used the following code.
+
+```{r, eval=FALSE}
+#Load Package#
+library(PRECISE)
+
+#Load Environment for Data#
+load("Input.rda")
+
+#Pathway Headers#
+pw.array=Pathways
+
+#Load Data : Tumor x Pathway#
+RPPAdat=Final[1,1][[1]]
+
+Details=RPPAdat[,1:2]
+RPPAdat=as.matrix(RPPAdat[,-(1:2)])
+p=ncol(RPPAdat)
+
+#Uniform Prior#
+Gmat=matrix(0.5,p,p)
+diag(Gmat)=0
+
+#Final Response Vector + Covariate Matrix#
+dat=getregcovDat(Gmat=Gmat,RPPAdat=RPPAdat)
+
+#Fit Model Now#
+bmsfit=getBMS(dat,Gmat)
+
+#Get Tumor-Specific Pathway Network#
+nodes=names(dat$ylist)
+netfit=getPosteriors(bmsfit$outlist,nodes)
+Network=netfit$G
+
+#Get Betas for Tumor-Specific Pathway Network#
+Coeffs=Network
+
+for(i in 1:nrow(Coeffs))
+{
+  Coeffs[i,]=append(bmsfit$outlist[[i]][[1]]$b1mo,0,after=i-1)
+}
+
+#Create Patient-Specific Networks#
+delta=0.5
+psNet=getPRECISE(bmsfit$outlist,bmsfit$pdlist,nodes,delta)
+Scores=cbind(Details,psNet$score.mat)
+
+#Calibrate PRECISE Scores#
+Status=cbind(Details,apply(psNet$score.mat,1,which.max))
+```
+
+A typical set of outputs would look like this.
+
+```{r}
+load("Results.rda")
+head(Scores[1,1][[1]])
+head(Status[1,1][[1]])
+Graphs[1,1][[1]]
+```
+
+Now, using these sets of saved results, one would be able to compare the fitted pathway networks across cancer types and sample types, and identify any differential/conserved patterns in the network circuitry using different metrics to compare networks. We used the networks to compute connectivity scores and quantify significance via permutation tests. Codes for those are available in the subdirectory **Figure 3** under the **Figures** folder.
+
+One may also use the pathway scores to compare samples across cancers and correlate cancer types or samples types based on the scores. We took two different approaches in terms of this. For a cross-pathway comparison of the samples, we used Pearson correlations, codes and resutls for which are available in the **Figure 4** subdirectory under **Figures**. We also used hierarchical clustering across all patients and sample types based on the scores, codes for which are available under **Figure 5**.
