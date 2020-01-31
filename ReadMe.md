@@ -1,4 +1,4 @@
-# TransPRECISE: Personalized Network Modeling of Pan-cancer Human and Cell Line Interactome
+# TransPRECISE: Personalized Network Modeling of Pan-cancer Patient and Cell Line Interactome
 
 Hi! Welcome to our repository for the TransPRECISE project!
 
@@ -21,4 +21,4 @@ The R Shiny app for interactive visualizations of our results is hosted [here](h
 
 If you are using TransPRECISE codes or the Shiny app, please cite the following.
 
-Bhattacharyya, R., Ha, M. J., Liu, Q., Akbani, R., Liang, H. & Baladandayuthapani, V. (2019). Proteomics-based Network Modeling of Pan-cancer Human and Cell line Interactome. *Submitted to JCO CCI*.
+Bhattacharyya, R., Ha, M. J., Liu, Q., Akbani, R., Liang, H. & Baladandayuthapani, V. (2019+). Proteomics-based Network Modeling of Pan-cancer Human and Cell line Interactome. *Submitted to JCO CCI, under revision*.
